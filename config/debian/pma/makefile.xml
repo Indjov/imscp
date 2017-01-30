@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file mode="0640">@sysconfdir@/imscp/pma/phpmyadmin.data</copy_file>
+</install>

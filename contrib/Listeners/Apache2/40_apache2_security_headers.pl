@@ -31,7 +31,7 @@ iMSCP::EventManager->getInstance()->register(
     sub {
         my ($cfgTpl, $tplName) = @_;
 
-        my $cfgSnippet = <<EOF;
+        my $cfgSnippet = <<"EOF";
     # BEGIN Listener::Apache2::Security::Headers
     <IfModule mod_headers.c>
         Header always set Content-Security-Policy "default-src {PREFIX}: data: 'unsafe-inline' 'unsafe-eval'"
@@ -42,13 +42,14 @@ iMSCP::EventManager->getInstance()->register(
     # END Listener::Apache2::Security::Headers
 EOF
 
-        if($tplName =~ /^domain(?:_ssl)?\.tpl$/) {
-            if($tplName =~ /^domain\.tpl$/) {
+        if ($tplName =~ /^domain(?:_ssl)?\.tpl$/) {
+            if ($tplName =~ /^domain\.tpl$/) {
                 $cfgSnippet = process( { PREFIX => 'http' }, $cfgSnippet );
             } else {
                 $cfgSnippet = process( { PREFIX => 'https' }, $cfgSnippet );
             }
-            $$cfgTpl =~ s/(^\s+Include.*<\/VirtualHost>)/\n$cfgSnippet\n$1/sm;
+
+            ${$cfgTpl} =~ s/(^\s+Include.*<\/VirtualHost>)/\n$cfgSnippet\n$1/sm;
         }
         0;
     }

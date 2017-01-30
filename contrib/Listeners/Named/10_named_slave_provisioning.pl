@@ -63,6 +63,8 @@ my $realm = 'i-MSCP provisioning service for slave DNS servers';
 ## Please, don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 # Create the .htpasswd file to restrict access to the provisioning script
 sub createHtpasswdFile
 {
@@ -98,7 +100,7 @@ $eventManager->register(
 
         return 0 unless $tplName eq '00_master.conf' || $tplName eq '00_master_ssl.conf';
 
-        my $locationSnippet = <<EOF;
+        my $locationSnippet = <<"EOF";
     location /provisioning {
         root /var/www/imscp/gui/public;
 
@@ -112,18 +114,18 @@ $eventManager->register(
     }
 EOF
 
-        $$tplContent = replaceBloc(
+        ${$tplContent} = replaceBloc(
             "# SECTION custom BEGIN.\n",
             "# SECTION custom END.\n",
             "    # SECTION custom BEGIN.\n".
                 getBloc(
                     "# SECTION custom BEGIN.\n",
                     "# SECTION custom END.\n",
-                    $$tplContent
+                    ${$tplContent}
                 ).
                 "$locationSnippet\n".
                 "    # SECTION custom END.\n",
-            $$tplContent
+            ${$tplContent}
         );
         0;
     }

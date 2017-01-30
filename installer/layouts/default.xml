@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <DESTDIR>/tmp/imscp</DESTDIR>
+    <prefix>/usr/local</prefix>
+    <exec_prefix>@prefix@</exec_prefix>
+    <bindir>@exec_prefix@/bin</bindir>
+    <sbindir>@exec_prefix@/sbin</sbindir>
+    <datarootdir>@prefix@/share</datarootdir>
+    <datadir>@datarootdir@</datadir>
+    <sysconfdir>@prefix@/etc</sysconfdir>
+    <localstatedir>/var</localstatedir>
+    <runstatedir>@localstatedir@/run</runstatedir>
+    <libdir>@exec_prefix@/lib</libdir>
+</install>

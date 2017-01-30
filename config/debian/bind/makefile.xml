@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@sysconfdir@/imscp/bind/bind.data</copy_file>
+    <copy_file>@sysconfdir@/imscp/bind/named.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/bind/named.conf.local</copy_file>
+    <copy_file>@sysconfdir@/imscp/bind/named.conf.options</copy_file>
+    <copy_folder>@sysconfdir@/imscp/bind/parts</copy_folder>
+</install>

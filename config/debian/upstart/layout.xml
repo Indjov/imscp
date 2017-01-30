@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <create_folder>@sysconfdir@/init</create_folder>
+    <copy_file>@sysconfdir@/init/imscp_daemon.conf</copy_file>
+    <copy_file>@sysconfdir@/init/imscp_mountall.conf</copy_file>
+    <copy_file>@sysconfdir@/init/imscp_panel.conf</copy_file>
+    <copy_file if="'@DISTRO_CODENAME@' eq 'trusty'">@sysconfdir@/init/imscp_panel.override</copy_file>
+    <copy_file if="'@HTTPD_SERVER@' eq 'apache_php_fpm' &amp;&amp; '@DISTRO_CODENAME@' eq 'trusty'">@sysconfdir@/init/php5-fpm.override</copy_file>
+    <copy_file>@sysconfdir@/init/imscp_traffic.conf</copy_file>
+</install>

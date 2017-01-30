@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@sysconfdir@/imscp/proftpd/proftpd.conf</copy_file>
+    <copy_file mode="0640">@sysconfdir@/imscp/proftpd/proftpd.data</copy_file>
+    <copy_file if="'@FTPD_SERVER@' eq 'proftpd'">@sysconfdir@/logrotate.d/proftpd-basic</copy_file>
+</install>

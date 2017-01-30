@@ -39,6 +39,8 @@ my $USER_WEB_DIR = '/home/virtual';
 ## Please don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'beforeSetupSystemDirectories',
     sub {

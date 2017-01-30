@@ -25,7 +25,7 @@ use strict;
 use warnings;
 use iMSCP::EventManager;
 use iMSCP::File;
-use Servers::mta;
+use iMSCP::Servers::mta;
 
 #
 ## Configuration variables
@@ -41,6 +41,8 @@ my $saslPasswdMapsPath = '/etc/postfix/relay_passwd';
 ## Please, don't edit anything below this line unless you known what you're doing
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 my $em = iMSCP::EventManager->getInstance();
 $em->register(
     'beforeInstallPackages',
@@ -49,10 +51,11 @@ $em->register(
         0;
     }
 );
+
 $em->register(
     'afterMtaBuildConf',
     sub {
-        my $mta = Servers::mta->factory();
+        my $mta = iMSCP::Servers::mta->factory();
         my $rs = $mta->addMapEntry( $saslPasswdMapsPath, "$relayhost:$relayport\t$saslAuthUser:$saslAuthPasswd" );
         $rs ||= $mta->postconf(
             (

@@ -24,7 +24,7 @@ package Listener::Postfix::Sender::Generic::Map;
 use strict;
 use warnings;
 use iMSCP::EventManager;
-use Servers::mta;
+use iMSCP::Servers::mta;
 
 #
 ## Configuration variables
@@ -36,10 +36,12 @@ my $postfixSmtpGenericMap = '/etc/postfix/imscp/smtp_outgoing_rewrite';
 ## Please, don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterMtaBuildConf',
     sub {
-        my $mta = Servers::mta->factory();
+        my $mta = iMSCP::Servers::mta->factory();
         my $rs = $mta->addMapEntry( $postfixSmtpGenericMap );
         $rs ||= $mta->postconf(
             (

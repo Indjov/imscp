@@ -44,13 +44,15 @@ function cli_getMailData($domainName)
             $row = $stmt->fetchRow();
             $data[$domainName] = array(
                 'domain_id' => $row['domain_id'],
-                'sub_id' => '0',
+                'sub_id'    => '0',
                 'mail_type' => MT_NORMAL_MAIL
             );
         } else {
             $stmt = exec_query(
                 "
-                    SELECT domain_id, subdomain_id FROM subdomain INNER JOIN domain USING(domain_id)
+                    SELECT domain_id, subdomain_id
+                    FROM subdomain
+                    INNER JOIN domain USING(domain_id)
                     WHERE CONCAT(subdomain_name, '.', domain_name) = ?
                 ",
                 $domainName
@@ -60,7 +62,7 @@ function cli_getMailData($domainName)
                 $row = $stmt->fetchRow();
                 $data[$domainName] = array(
                     'domain_id' => $row['domain_id'],
-                    'sub_id' => $row['subdomain_id'],
+                    'sub_id'    => $row['subdomain_id'],
                     'mail_type' => MT_SUBDOM_MAIL
                 );
             } else {
@@ -69,13 +71,14 @@ function cli_getMailData($domainName)
                     $row = $stmt->fetchRow();
                     $data[$domainName] = array(
                         'domain_id' => $row['domain_id'],
-                        'sub_id' => '0',
+                        'sub_id'    => '0',
                         'mail_type' => MT_ALIAS_MAIL
                     );
                 } else {
                     $stmt = exec_query(
                         "
-                            SELECT domain_id, subdomain_alias_id FROM subdomain_alias
+                            SELECT domain_id, subdomain_alias_id
+                            FROM subdomain_alias
                             INNER JOIN domain_aliasses USING(alias_id)
                             INNER JOIN domain USING(domain_id)
                             WHERE CONCAT(subdomain_alias_name, '.', alias_name) = ?
@@ -87,25 +90,27 @@ function cli_getMailData($domainName)
                         $row = $stmt->fetchRow();
                         $data[$domainName] = array(
                             'domain_id' => $row['domain_id'],
-                            'sub_id' => $row['subdomain_alias_id'],
+                            'sub_id'    => $row['subdomain_alias_id'],
                             'mail_type' => MT_ALSSUB_MAIL
                         );
                     } else {
-                        $data[$domainName] = null;
+                        $data[$domainName] = NULL;
                     }
                 }
             }
         }
     }
 
-    if ($data[$domainName] !== null) {
+    if ($data[$domainName] !== NULL) {
         return $data[$domainName];
     }
 
-    throw new iMSCP_Exception('This script can only add mail accounts for domains which are already managed by i-MSCP.');
+    throw new iMSCP_Exception(
+        'This script can only add normal mail accounts for domains which are already managed by i-MSCP.'
+    );
 }
 
-include '/var/www/imscp/gui/library/imscp-lib.php';
+require_once '/var/www/imscp/gui/library/imscp-lib.php';
 
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -117,13 +122,13 @@ if (!isset($argv[1])) {
     exit(1);
 }
 
-$csvFilePath = $argv[1];
+$csvFilePath = utils_normalizePath($argv[1]);
 
 // csv column delimiter
 $csvDelimiter = ',';
 
 if (($handle = fopen($csvFilePath, 'r')) === false) {
-    fwrite(STDERR, sprintf("ERROR: Unable to open %s file.\n", $csvFilePath));
+    fwrite(STDERR, sprintf("ERROR: Couldn't to open %s file.\n", $csvFilePath));
     exit(1);
 }
 
@@ -148,43 +153,47 @@ while (($csvEntry = fgetcsv($handle, 1024, $csvDelimiter)) !== false) {
 
     try {
         if (!chk_email($asciiMailAddr)) {
-            throw new iMSCP_Exception(sprintf('%s is not a valid email address.', $mailAddr));
+            throw new iMSCP_Exception(sprintf("`%s' is not a valid email address.", $mailAddr));
         }
 
         if (!checkPasswordSyntax($mailPassword)) {
-            throw new iMSCP_Exception(sprintf('Wrong password syntax or length for the %s mail account.', $mailAddr));
+            throw new iMSCP_Exception(sprintf("Wrong password syntax or length for the `%s' mail account.", $mailAddr));
+        }
+
+        if (strpos($mailPassword, '$6$') !== 0) {
+            $mailPassword = \iMSCP\Crypt::sha512($mailPassword);
         }
 
         list($mailUser, $mailDomain) = explode('@', $asciiMailAddr);
 
         $mailAccount = array_merge(cli_getMailData($mailDomain), array(
-            'mail_acc' => $mailUser,
-            'mail_pass' => $mailPassword,
-            'mail_forward' => '_no_',
-            'status' => 'toadd',
-            'mail_auto_respond' => '0',
-            'mail_auto_respond_text' => null,
-            'quota' => '0',
-            'mail_addr' => $asciiMailAddr
+            'mail_acc'               => $mailUser,
+            'mail_pass'              => $mailPassword,
+            'mail_forward'           => '_no_',
+            'status'                 => 'toadd',
+            'mail_auto_respond'      => '0',
+            'mail_auto_respond_text' => NULL,
+            'quota'                  => '0',
+            'mail_addr'              => $asciiMailAddr
         ));
 
         try {
             $stmt->execute($mailAccount);
-            printf("`%s` has been successfully inserted in database.\n", $mailAddr);
+            printf("`%s' has been successfully inserted in database.\n", $mailAddr);
         } catch (PDOException $e) {
             if ($e->getCode() == 23000) {
-                printf("WARN: `%s` already exists in database. Skipping...\n", $mailAddr);
+                printf("WARN: `%s' already exists in database. Skipping...\n", $mailAddr);
             } else {
-                fwrite(STDERR, sprintf("ERROR: Could not insert `%s in database: %s\n", $mailAddr, $e->getMessage()));
+                fwrite(STDERR, sprintf("ERROR: Couldn't insert `%s' in database: %s\n", $mailAddr, $e->getMessage()));
             }
         }
     } catch (iMSCP_Exception $e) {
-        fwrite(STDERR, sprintf("ERROR: `%s` has been skipped: %s\n", $mailAddr, $e->getMessage()));
+        fwrite(STDERR, sprintf("ERROR: `%s' has been skipped: %s\n", $mailAddr, $e->getMessage()));
     }
 }
 
 if (!send_request()) {
-    fwrite(STDERR, "ERROR: Could not send request to i-MSCP daemon.\n");
+    fwrite(STDERR, "ERROR: Couldn't send request to i-MSCP daemon.\n");
     exit(1);
 }
 

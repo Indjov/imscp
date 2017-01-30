@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file if="'${PO_SERVER}' eq 'courier'" mode="0755" user="${ROOT_USER}" group="${ROOT_GROUP}">@sysconfdir@/init.d/courier-authdaemon</copy_file>
+    <copy_file mode="0755">@sysconfdir@/init.d/imscp_daemon</copy_file>
+    <copy_file mode="0755">@sysconfdir@/init.d/imscp_mountall</copy_file>
+    <copy_file mode="0755">@sysconfdir@/init.d/imscp_panel</copy_file>
+    <copy_file mode="0755">@sysconfdir@/init.d/imscp_traffic</copy_file>
+    <copy_file if="'${FTPD_SERVER}' eq 'proftpd' and grep($_ eq '${DISTRO_CODENAME}', ('precise', 'trusty'))" mode="0755" kept="1">@sysconfdir@/init.d/proftpd</copy_file>
+</install>

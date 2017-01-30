@@ -45,7 +45,8 @@ my @hostsFileEntries = (
 ## Please, don't edit anything below this line
 #
 
-# Listener responsible to add host entries in the system hosts file, once it was built by i-MSCP
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterSetupServerHostname',
     sub {

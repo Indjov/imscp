@@ -81,11 +81,11 @@ sub addCustomDNSrecord
 
     push @formattedEntries, '; dualstack DNS entries END';
 
-    $$tplDbFileContent = replaceBloc(
+    ${$tplDbFileContent} = replaceBloc(
         "; custom DNS entries BEGIN\n",
         "; custom DNS entries ENDING\n",
         join( "\n", @formattedEntries )."\n",
-        $$tplDbFileContent,
+        ${$tplDbFileContent},
         'PreserveTags'
     );
     undef @formattedEntries;
@@ -124,18 +124,18 @@ sub addCustomDNSrecordSub
 
     push @formattedEntries, '; dualstack DNS entries END';
 
-    $$wrkDbFileContent = replaceBloc(
+    ${$wrkDbFileContent} = replaceBloc(
         "; sub [$data->{'DOMAIN_NAME'}] entry BEGIN\n",
         "; sub [$data->{'DOMAIN_NAME'}] entry ENDING\n",
         "; sub [$data->{'DOMAIN_NAME'}] entry BEGIN\n".
             getBloc(
                 "; sub [$data->{'DOMAIN_NAME'}] entry BEGIN\n",
                 "; sub [$data->{'DOMAIN_NAME'}] entry ENDING\n",
-                $$wrkDbFileContent
+                ${$wrkDbFileContent}
             ).
             join( "\n", @formattedEntries )."\n".
             "; sub [$data->{'DOMAIN_NAME'}] entry ENDING\n",
-        $$wrkDbFileContent
+        ${$wrkDbFileContent}
     );
     undef @formattedEntries;
     0;

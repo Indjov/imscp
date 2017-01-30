@@ -25,6 +25,8 @@ use strict;
 use warnings;
 use iMSCP::EventManager;
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'beforeNamedBuildConf',
     sub {
@@ -32,7 +34,7 @@ iMSCP::EventManager->getInstance()->register(
 
         return 0 unless $tplName eq 'named.conf.options';
 
-        $$tplContent =~ s/^(\s*allow-(?:recursion|query-cache|transfer)).*$/$1 { localnets; };/gm;
+        ${$tplContent} =~ s/^(\s*allow-(?:recursion|query-cache|transfer)).*$/$1 { localnets; };/gm;
         0;
     }
 );

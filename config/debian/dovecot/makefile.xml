@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <copy_file>@sysconfdir@/imscp/dovecot/dovecot.conf.2.0</copy_file>
+    <copy_file>@sysconfdir@/imscp/dovecot/dovecot.conf.2.1</copy_file>
+    <copy_file mode="0640">@sysconfdir@/imscp/dovecot/dovecot.data</copy_file>
+    <copy_file>@sysconfdir@/imscp/dovecot/dovecot-sql.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/dovecot/quota-warning</copy_file>
+</layout>

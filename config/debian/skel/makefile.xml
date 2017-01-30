@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_folder>@sysconfdir@/imscp/skel/alias</copy_folder>
+    <copy_folder>@sysconfdir@/imscp/skel/domain</copy_folder>
+    <copy_folder>@sysconfdir@/imscp/skel/domain_disabled_pages</copy_folder>
+    <copy_folder>@sysconfdir@/imscp/skel/subdomain</copy_folder>
+    <copy_file>@sysconfdir@/imscp/skel/README</copy_file>
+</install>

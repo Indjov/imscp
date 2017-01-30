@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@libdir@/imscp_panel/imscp_panel_checkconf</copy_file>
+    <copy_file>@libdir@/imscp_panel/imscp_panel_reopenlogs</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/00_master.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/00_master_ssl.conf</copy_file>
+    <copy_file>@sysconfdir@/logrotate.d/imscp_panel</copy_file>
+    <copy_file mode="0640">@sysconfdir@/imscp/frontend/frontend.data</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/imscp_fastcgi.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/imscp_php.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/nginx.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/php.ini</copy_file>
+    <copy_file>@sysconfdir@/imscp/frontend/php-fpm.conf</copy_file>
+</install>

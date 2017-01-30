@@ -29,6 +29,8 @@ use iMSCP::EventManager;
 ## Please, don't edit anything below this line unless you known what you're doing
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterSetupTasks',
     sub {

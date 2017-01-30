@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@sysconfdir@/imscp/database/database.sql</copy_file>
+</install>

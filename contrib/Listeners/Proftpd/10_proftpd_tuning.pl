@@ -25,6 +25,8 @@ use strict;
 use warnings;
 use iMSCP::EventManager;
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterFtpdBuildConf',
     sub {
@@ -33,14 +35,14 @@ iMSCP::EventManager->getInstance()->register(
         return 0 unless $tplName eq 'proftpd.conf';
 
         # Disable the message displayed on connect
-        unless ($$tplContent =~ /^ServerIdent/m) {
-            $$tplContent =~ s/^(ServerType.*)/$1\nServerIdent                off/m;
+        unless (${$tplContent} =~ /^ServerIdent/m) {
+            ${$tplContent} =~ s/^(ServerType.*)/$1\nServerIdent                off/m;
         } else {
-            $$tplContent =~ s/^ServerIdent.*/ServerIdent                off/m;
+            ${$tplContent} =~ s/^ServerIdent.*/ServerIdent                off/m;
         }
 
         # Enforce TLS connection
-        $$tplContent =~ s/^(\s+TLSRequired.*)off$/$1on/m;
+        ${$tplContent} =~ s/^(\s+TLSRequired.*)off$/$1on/m;
         0;
     }
 );

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <create_folder>@sysconfdir@/systemd/system</create_folder>
+    <create_folder>@sysconfdir@/tmpfiles.d</create_folder>
+    <copy_file>@sysconfdir@/systemd/system/bind9.service</copy_file>
+    <copy_file>@sysconfdir@/systemd/system/bind9-resolvconf.service</copy_file>
+    <copy_file if="'@PO_SERVER@' eq 'courier'">@sysconfdir@/tmpfiles.d/courier-authdaemon.conf</copy_file>
+    <copy_file>@sysconfdir@/systemd/system/imscp_daemon.service</copy_file>
+    <copy_file>@sysconfdir@/systemd/system/imscp_mountall.service</copy_file>
+    <copy_file>@sysconfdir@/systemd/system/imscp_panel.service</copy_file>
+    <copy_file>@sysconfdir@/systemd/system/imscp_traffic.service</copy_file>
+</install>

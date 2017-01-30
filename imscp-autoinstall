@@ -1,11 +1,5 @@
 #!/usr/bin/perl
 
-=head1 NAME
-
- iMSCP::Debug - Debug library
-
-=cut
-
 # i-MSCP - internet Multi Server Control Panel
 # Copyright (C) 2010-2017 by Laurent Declercq <l.declercq@nuxwin.com>
 #
@@ -35,15 +29,16 @@ imscp-autoinstall Install/Update/Reconfigure i-MSCP
 
 use strict;
 use warnings;
+use File::Basename;
 use FindBin;
-use lib $FindBin::Bin, "$FindBin::Bin/engine/PerlLib", "$FindBin::Bin/engine/PerlVendor";
+use lib "$FindBin::Bin/installer/lib", "$FindBin::Bin/backend/lib/site_perl";
 use iMSCP::Debug;
 use iMSCP::Requirements;
 use iMSCP::Dialog;
 use iMSCP::Getopt;
-use File::Basename;
-use autoinstaller::Functions qw/loadConfig build install/;
-use POSIX qw(locale_h);
+use iMSCP::Installer::Functions qw/ Init Build Install /;
+use iMSCP::Installer::Layout;
+use POSIX qw/ locale_h /;
 use locale;
 
 setlocale(LC_ALL, 'C.UTF-8');
@@ -68,15 +63,18 @@ $main::execmode = 'setup' unless defined $main::execmode;
 $main::buildonly = 0;
 $main::forcereinstall = 0;
 $main::skippackages = 0;
+$main::installlayout = "$FindBin::Bin/installer/layouts/default.xml";
 
-# Parse autoinstaller options
+# Parse installer options
 iMSCP::Getopt->parse(sprintf('Usage: perl %s [OPTION]...', basename($0)) . qq {
- -b,    --build-only            Process build steps only.
- -f,    --force-reinstall       Force reinstallation of distro packages.
- -s,    --skip-distro-packages  Do not install/update distro packages.},
- 'build-only|b' => \$main::buildonly,
- 'force-reinstall|f' => \$main::forcereinstall,
- 'skip-distro-packages|s' => \$main::skippackages
+ -b,    --build-only         Process build steps only.
+ -f,    --force-reinstall    Force reinstallation of distro packages.
+ -l,    --layout             Installation layout file.
+ -s,    --skip-dist-packages Do not install distribution packages.},
+ 'build-only|b'              => \$main::buildonly,
+ 'force-reinstall|f'         => \$main::forcereinstall,
+ 'layout|l'                  => \$main::installlayout,
+ 'skip-dist-packages|s'      => \$main::skippackages
 );
 
 # Set debug and verbose mode
@@ -94,12 +92,6 @@ if(iMSCP::Getopt->preseed) {
     $main::reconfigure = 'none';
     iMSCP::Getopt->noprompt(1);
 }
-
-# Load config
-loadConfig();
-
-# Handle the listener option
-require iMSCP::Getopt->listener if iMSCP::Getopt->listener;
 
 # Handle noprompt option
 if(iMSCP::Getopt->noprompt) {
@@ -132,12 +124,19 @@ if(iMSCP::Getopt->noprompt) {
     system('clear');
 }
 
+# Initialize installer
+my $ret = Init();
+exit($ret) if $ret;
+
+# Handle the listener option
+require iMSCP::Getopt->listener if iMSCP::Getopt->listener;
+
 # Build steps
-my $ret = build();
+$ret = Build();
 
 unless($ret) {
     unless ($main::buildonly) {
-        $ret = install();
+        $ret = Install();
     } else {
         my $msg = <<EOF;
 
@@ -145,10 +144,12 @@ unless($ret) {
 
 Please run the following commands from your console:
 
-    # rm -fR $main::imscpConfig{'ROOT_DIR'}/{daemon,engine,gui}
-    # cp -fR $main::{'INST_PREF'}/* /
-    # rm -fR $main::{'INST_PREF'}
-    # perl $main::imscpConfig{'ROOT_DIR'}/engine/setup/imscp-reconfigure -d
+    # rm -f $iMSCP::Installer::Layout::bindir/imscp*
+    # rm -f $iMSCP::Installer::Layout::sbindir/imscp*
+    # rm -fR $iMSCP::Installer::Layout::datadir/imscp
+    # cp -fpR $iMSCP::Installer::Layout::DESTDIR$iMSCP::Installer::Layout::prefix/* /
+    # rm -fR $iMSCP::Installer::Layout::DESTDIR
+    # imscp-reconfigure -d
 EOF
 
         $msg .= <<EOF;
@@ -162,7 +163,7 @@ EOF
     }
 }
 
-exit $ret;
+exit($ret);
 
 =head1 AUTHOR
 

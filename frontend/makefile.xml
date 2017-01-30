@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_folder user="root" group="root" filemode="0755">@bindir@/bin</copy_folder>
+    <copy_folder user="root" group="root" filemode="0644">@libdir@</copy_folder>
+    <copy_folder user="root" group="root" filemode="0755">@sbindir@</copy_folder>
+</install>

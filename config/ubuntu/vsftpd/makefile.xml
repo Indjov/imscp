@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <create_folder mode="0755" user="${ROOT_USER}" group="${ROOT_GROUP}">${ROOT_CONF}/vsftpd/imscp</create_folder>
+    <create_folder>@sysconfdir@/imscp/vsftpd/backup</create_folder>
+    <copy_file>@sysconfdir@/imscp/vsftpd/vsftpd.conf</copy_file>
+    <copy_file mode="0640">@sysconfdir@/imscp/vsftpd/vsftpd.data</copy_file>
+    <copy_file>@sysconfdir@/imscp/vsftpd/vsftpd.pam</copy_file>
+    <copy_file>@sysconfdir@/imscp/vsftpd/vsftpd_user.conf</copy_file>
+</install>

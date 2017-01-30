@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_folder>@sysconfdir@/imscp/php/apache</copy_folder>
+    <copy_folder>@sysconfdir@/imscp/php/fcgi</copy_folder>
+    <copy_folder>@sysconfdir@/imscp/php/fpm</copy_folder>
+    <copy_file mode="0640">@sysconfdir@/imscp/php/php.data</copy_file>
+</install>

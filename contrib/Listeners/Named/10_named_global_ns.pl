@@ -52,15 +52,17 @@ my $ZONE_NAME = 'zone.tld';
 my @NAMESERVERS = (
     [ "ns1.$ZONE_NAME", '<ipv4>' ], # MASTER DNS IP (IPv4 ; this server)
     [ "ns1.$ZONE_NAME", '<ipv6>' ], # MASTER DNS IP (IPv6 ; this server)
-    [ 'ns2.name.tld',   '<ipv4>' ], # SLAVE DNS 1 IP (IPv4)
-    [ 'ns2.name.tld',   '<ipv6>' ], # SLAVE DNS 1 IP (IPv6)
-    [ 'ns3.name.tld',   '<ipv4>' ], # SLAVE DNS 2 IP (IPv4)
-    [ 'ns3.name.tld',   '<ipv6>' ]  # SLAVE DNS 2 IP (IPv6)
+    [ 'ns2.name.tld', '<ipv4>' ], # SLAVE DNS 1 IP (IPv4)
+    [ 'ns2.name.tld', '<ipv6>' ], # SLAVE DNS 1 IP (IPv6)
+    [ 'ns3.name.tld', '<ipv4>' ], # SLAVE DNS 2 IP (IPv4)
+    [ 'ns3.name.tld', '<ipv6>' ]  # SLAVE DNS 2 IP (IPv6)
 );
 
 #
 ## Please, don't edit anything below this line
 #
+
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
 
 iMSCP::EventManager->getInstance()->register(
     'beforeNamedAddDmnDb',
@@ -74,7 +76,9 @@ iMSCP::EventManager->getInstance()->register(
 
         # Set NS and glue record entries (for all zones)
         my $nsRecordB = getBloc( "; dmn NS RECORD entry BEGIN\n", "; dmn NS RECORD entry ENDING\n", ${$tpl} );
-        my $glueRecordB = getBloc( "; dmn NS GLUE RECORD entry BEGIN\n", "; dmn NS GLUE RECORD entry ENDING\n", ${$tpl} );
+        my $glueRecordB = getBloc(
+            "; dmn NS GLUE RECORD entry BEGIN\n", "; dmn NS GLUE RECORD entry ENDING\n", ${$tpl}
+        );
         my ($nsRecords, $glueRecords) = ('', '');
         my $net = iMSCP::Net->getInstance();
 
@@ -104,7 +108,9 @@ iMSCP::EventManager->getInstance()->register(
         }
 
         ${$tpl} = replaceBloc("; dmn NS RECORD entry BEGIN\n", "; dmn NS RECORD entry ENDING\n", $nsRecords, ${$tpl});
-        ${$tpl} = replaceBloc("; dmn NS GLUE RECORD entry BEGIN\n", "; dmn NS GLUE RECORD entry ENDING\n", $glueRecords, ${$tpl});
+        ${$tpl} = replaceBloc(
+            "; dmn NS GLUE RECORD entry BEGIN\n", "; dmn NS GLUE RECORD entry ENDING\n", $glueRecords, ${$tpl}
+        );
         0;
     }
 );

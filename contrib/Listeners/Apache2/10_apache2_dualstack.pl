@@ -25,7 +25,7 @@ use strict;
 use warnings;
 use iMSCP::EventManager;
 use iMSCP::Net;
-use Servers::httpd;
+use iMSCP::Servers::httpd;
 use List::MoreUtils qw(uniq);
 use Scalar::Defer;
 use version;
@@ -52,7 +52,7 @@ my @ADDITIONAL_IPS = ( '<IP1>', '<IP2>' );
 #
 
 my $IS_APACHE24 = lazy {
-    my $APACHE_VERSION = Servers::httpd->factory()->{'config'}->{'HTTPD_VERSION'};
+    my $APACHE_VERSION = iMSCP::Servers::httpd->factory()->{'config'}->{'HTTPD_VERSION'};
     version->parse( "$APACHE_VERSION" ) >= version->parse( '2.4.0' );
 };
 my @IPS = ();

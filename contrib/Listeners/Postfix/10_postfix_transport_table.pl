@@ -25,7 +25,7 @@ package Listener::Postfix::Transport::Table;
 use strict;
 use warnings;
 use iMSCP::EventManager;
-use Servers::mta;
+use iMSCP::Servers::mta;
 
 #
 ## Configuration variables
@@ -44,11 +44,13 @@ my %transportTableEntries = (
 ## Please, don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 # Listener responsible to add entries in the Postfix transport(5) table
 iMSCP::EventManager->getInstance()->register(
     'afterCreatePostfixMaps',
     sub {
-        my $mta = Servers::mta->factory();
+        my $mta = iMSCP::Servers::mta->factory();
         while(my ($recipient, $transport) = each(%transportTableEntries)) {
             my $rs = $mta->addMapEntry( $mta->{'config'}->{'MTA_TRANSPORT_HASH'}, "$recipient\t$transport" );
             return $rs if $rs;

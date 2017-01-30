@@ -25,12 +25,14 @@ use strict;
 use warnings;
 use iMSCP::EventManager;
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterPoBuildConf',
     sub {
         my ($cfgTpl, $tplName) = @_;
-        return 0 unless index( $tplName, 'dovecot.conf' ) != -1;
-        $$cfgTpl =~ s/^(disable_plaintext_auth\s+=\s+).*/$1yes/ if $cfgTpl =~ /^ssl\s+=\s+yes/;
+        return 0 unless index( $tplName, 'dovecot.conf' ) != - 1;
+        ${$cfgTpl} =~ s/^(disable_plaintext_auth\s+=\s+).*/$1yes/ if $cfgTpl =~ /^ssl\s+=\s+yes/;
         0;
     }
 );

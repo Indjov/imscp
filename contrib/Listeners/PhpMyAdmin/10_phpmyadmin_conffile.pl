@@ -37,6 +37,8 @@ my $tplFilePath = '/root/imscp.config.inc.php';
 ## Please, don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'onLoadTemplate',
     sub {
@@ -44,7 +46,7 @@ iMSCP::EventManager->getInstance()->register(
 
         return 0 unless $pkgName eq 'phpmyadmin' && $tplName eq 'imscp.config.inc.php' && -f $tplFilePath;
 
-        $$tplContent = iMSCP::File->new( filename => $tplFilePath )->get();
+        ${$tplContent} = iMSCP::File->new( filename => $tplFilePath )->get();
         0;
     }
 );

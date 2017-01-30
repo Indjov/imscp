@@ -1,0 +1,26 @@
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Traffic accounting
+0,30 * * * * root imscp-srv-traff > {LOG_DIR}/imscp-srv-traff.log 2>&1
+0,30 * * * * root imscp-vrl-traff > {LOG_DIR}/imscp-vrl-traff.log 2>&1
+
+# Quota accounting
+@daily root nice -n 15 ionice -c2 -n5 imscp-dsk-quota > {LOG_DIR}/imscp-dsk-quota.log 2>&1
+
+# Disable expired accounts
+@daily root nice -n 15 ionice -c2 -n5 imscp-disable-accounts >/dev/null 2>&1
+
+# Backup i-MSCP configuration files and database
+@daily root nice -n 15 ionice -c2 -n5 imscp-backup-imscp > {LOG_DIR}/imscp-backup-imscp.log 2>&1
+
+# Remove configuration backups older than 7 days
+@weekly root find {CONF_DIR}/imscp/*/backup -type f -mtime +7 -regextype sed -regex '.*/.*[0-9]\{10\}$' -exec rm -- {} +
+
+# Remove i-MSCP backups older than 7 days
+@weekly root find {BACKUPS_DIR} -type f -mtime +7 -exec rm -- {} +
+
+# Remove backend Logs older than 7 days
+@weekly root find {LOG_DIR} -type f -mtime +7 -exec rm -- {} +
+
+# Backup customers' data depending of the domain properties
+{BACKUP_MINUTE} {BACKUP_HOUR} * * * root nice -n 15 ionice -c2 -n5 imscp-backup-all > {LOG_DIR}/imscp-backup-all.log 2>&1

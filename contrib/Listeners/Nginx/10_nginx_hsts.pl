@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #
-## Activates HTTP Strict Transport Security (HSTS).
+## Add HTTP Strict Transport Security (HSTS) header field where appliable.
 #
 
 package Listener::Nginx::HSTS;
@@ -24,28 +24,27 @@ package Listener::Nginx::HSTS;
 use strict;
 use warnings;
 use iMSCP::EventManager;
+use iMSCP::TemplateParser;
+
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
 
 iMSCP::EventManager->getInstance()->register(
-    'afterFrontEndBuildHttpdVhosts',
+    'afterFrontEndBuildConfFile',
     sub {
-        my $cfgSnippet = <<EOF;
+        my ($tplContent, $tplName) = @_;
 
-    # BEGIN Listener::Nginx::HSTS
-    add_header Strict-Transport-Security max-age=31536000;
-    # END Listener::Nginx::HSTS
-EOF
+        return 0 unless index($tplName, '00_master_ssl.conf') == 0;
 
-        my $file = iMSCP::File->new( filename => '/etc/nginx/sites-available/00_master_ssl.conf' );
-        my $fileContent = $file->get();
-        unless (defined $fileContent) {
-            error( sprintf( 'Could not read %s file', '/etc/nginx/sites-available/00_master_ssl.conf' ) );
-            return 1;
-        }
+        ${$tplContent} = replaceBloc(
+            "# SECTION custom BEGIN.\n",
+            "# SECTION custom END.\n",
+            getBloc("# SECTION custom BEGIN.\n", "# SECTION custom END.\n", ${$tplContent})
+                ."add_header Strict-Transport-Security max-age=31536000\n",
+            ${$tplContent},
+            'preserveTags'
+        );
 
-        $fileContent =~ s/(ssl_prefer_server_ciphers.*\n)/$1\n$cfgSnippet/g;
-
-        my $rs = $file->set( $fileContent );
-        $rs ||= $file->save();
+        0;
     }
 );
 

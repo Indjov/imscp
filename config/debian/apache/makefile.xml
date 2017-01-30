@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@sysconfdir@/imscp/apache/00_imscp.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/apache/00_nameserver.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/apache/apache.data</copy_file>
+    <copy_file>@sysconfdir@/imscp/apache/logrotate.conf</copy_file>
+    <copy_file>@sysconfdir@/imscp/apache/vlogger.conf.tpl</copy_file>
+    <copy_file>@sysconfdir@/imscp/apache/vlogger.sql</copy_file>
+    <copy_folder>@sysconfdir@/imscp/apache/parts</copy_folder>
+</install>

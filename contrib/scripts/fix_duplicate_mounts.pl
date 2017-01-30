@@ -17,9 +17,8 @@
 
 use strict;
 use warnings;
-use lib '/var/www/imscp/engine/PerlLib';
 use iMSCP::Bootstrapper;
-use iMSCP::Debug;
+use iMSCP::Debug / setDebug setVerbose /;
 use iMSCP::Mount qw/ umount /;
 
 iMSCP::Bootstrapper->getInstance()->boot(
@@ -35,7 +34,6 @@ iMSCP::Bootstrapper->getInstance()->boot(
 
 setDebug(0);
 setVerbose(1);
-
 umount($main::imscpConfig{'USER_WEB_DIR'});
 
 1;

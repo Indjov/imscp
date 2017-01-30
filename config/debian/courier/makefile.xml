@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@sysconfdir@/imscp/courier/authmysqlrc</copy_file>
+    <copy_file mode="0640">@sysconfdir@/imscp/courier/courier.data</copy_file>
+    <copy_file>@sysconfdir@/imscp/courier/imapd.local</copy_file>
+    <copy_file>@sysconfdir@/imscp/courier/quota-warning</copy_file>
+    <copy_folder>@sysconfdir@/imscp/courier/sasl</copy_folder>
+</install>

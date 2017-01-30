@@ -25,7 +25,7 @@ use strict;
 use warnings;
 use iMSCP::Debug;
 use iMSCP::EventManager;
-use Servers::mta;
+use iMSCP::Servers::mta;
 
 #
 ## Configuration variables
@@ -35,11 +35,11 @@ use Servers::mta;
 # Hash where each pair of key/value correspond to a postfix parameter
 # Please replace the entries below by your own entries
 my %mainCfParameters = (
-    'inet_protocols'     => 'ipv4, ipv6',
-    'inet_interfaces'    => '127.0.0.1, 192.168.2.5, [2001:db8:0:85a3::ac1f:8001]',
-    'smtp_bind_address'  => '192.168.2.5',
-    'smtp_bind_address6' => '',
-    'relayhost'          => '192.168.1.5:125'
+    inet_protocols     => 'ipv4, ipv6',
+    inet_interfaces    => '127.0.0.1, 192.168.2.5, [2001:db8:0:85a3::ac1f:8001]',
+    smtp_bind_address  => '192.168.2.5',
+    smtp_bind_address6 => '',
+    relayhost          => '192.168.1.5:125'
 );
 
 ## Postfix master.cf (see http://www.postfix.org/master.5.html)
@@ -53,6 +53,8 @@ my @masterCfParameters = (
 ## Please, don't edit anything below this line unless you known what you're doing
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 my $em = iMSCP::EventManager->getInstance();
 $em->register(
     'afterMtaBuildConf',
@@ -60,13 +62,13 @@ $em->register(
         my %params = ();
         while(my ($param, $value) = each( %mainCfParameters )) {
             $params{$param} = {
-                'action' => 'replace',
-                'values' => [ split /,\s+/, $value ]
+                action => 'replace',
+                values => [ split /,\s+/, $value ]
             };
         }
 
         if (%params) {
-            my $rs = Servers::mta->factory()->postconf( %params );
+            my $rs = iMSCP::Servers::mta->factory()->postconf( %params );
             return $rs if $rs;
         }
 
@@ -80,7 +82,7 @@ $em->register(
 
         return 0 unless @masterCfParameters;
 
-        $$cfgTpl .= join( "\n", @masterCfParameters )."\n";
+        ${$cfgTpl} .= join( "\n", @masterCfParameters )."\n";
         0;
     }
 );

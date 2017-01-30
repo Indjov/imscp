@@ -24,7 +24,7 @@ package Listener::Postfix::Policy::Whitelist;
 use strict;
 use warnings;
 use iMSCP::EventManager;
-use Servers::mta;
+use iMSCP::Servers::mta;
 
 #
 ## Configuration variables
@@ -37,10 +37,12 @@ my $policyRecipientWhitelistTable = '/etc/postfix/policy_recipient_whitelist';
 ## Please, don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterMtaBuildConf',
     sub {
-        my $mta = Servers::mta->factory();
+        my $mta = iMSCP::Servers::mta->factory();
         my $rs = $mta->addMapEntry( $policyClientWhitelistTable );
         $rs ||= $mta->addMapEntry( $policyRecipientWhitelistTable );
         $rs ||= $mta->postconf(

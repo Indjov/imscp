@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install>
+    <copy_file>@sysconfdir@/imscp/postfix/main.cf</copy_file>
+    <copy_file>@sysconfdir@/imscp/postfix/master.cf</copy_file>
+    <copy_file mode="0640">@sysconfdir@/imscp/postfix/postfix.data</copy_file>
+</install>

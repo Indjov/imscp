@@ -29,7 +29,7 @@ use warnings;
 use File::Basename;
 use iMSCP::EventManager;
 use iMSCP::TemplateParser;
-use Servers::named;
+use iMSCP::Servers::named;
 
 #
 ## Configuration variables
@@ -42,16 +42,18 @@ my $responsesPerSecond = 10;
 ## Please, don't edit anything below this line
 #
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'afterNamedBuildConf',
     sub {
         my ($tplContent, $tplName) = @_;
 
-        return 0 unless $tplName eq basename( Servers::named->factory()->{'config'}->{'BIND_OPTIONS_CONF_FILE'} );
+        return 0 unless $tplName eq basename( iMSCP::Servers::named->factory()->{'config'}->{'BIND_OPTIONS_CONF_FILE'} );
 
-        $$tplContent = replaceBloc(
+        ${$tplContent} = replaceBloc(
             "// imscp [{ENTRY_ID}] entry BEGIN\n",
-            "// imscp [{ENTRY_ID}] entry ENDING\n", <<"EOF", $$tplContent, 'preserveTags' );
+            "// imscp [{ENTRY_ID}] entry ENDING\n", <<"EOF", ${$tplContent}, 'preserveTags' );
         rate-limit {
             responses-per-second $responsesPerSecond;
         };

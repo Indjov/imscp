@@ -25,6 +25,8 @@ use strict;
 use warnings;
 use iMSCP::EventManager;
 
+return 1 unless defined $main::execmode && $main::execmode = 'setup';
+
 iMSCP::EventManager->getInstance()->register(
     'beforeHttpdBuildConf',
     sub {
@@ -40,11 +42,11 @@ iMSCP::EventManager->getInstance()->register(
                 $redirect .= "https://$main::imscpConfig{'BASE_SERVER_VHOST'}:$main::imscpConfig{'BASE_SERVER_VHOST_HTTPS_PORT'}\$1";
             }
 
-            $$cfgTpl =~ s/(^\s+Include.*<\/VirtualHost>)/\n    # BEGIN Listener::Apache2::Tools::Proxy\n$redirect\n    # END Listener::Apache2::Tools::Proxy\n$1/sm;
+            ${$cfgTpl} =~ s/(^\s+Include.*<\/VirtualHost>)/\n    # BEGIN Listener::Apache2::Tools::Proxy\n$redirect\n    # END Listener::Apache2::Tools::Proxy\n$1/sm;
             return 0;
         }
 
-        my $cfgProxy = <<EOF;
+        my $cfgProxy = <<"EOF";
 
     # BEGIN Listener::Apache2::Tools::Proxy
     SSLProxyEngine On
@@ -65,7 +67,7 @@ EOF
             $cfgProxy
         );
 
-        $$cfgTpl =~ s/(^\s+Include.*<\/VirtualHost>)/$cfgProxy$1/sm;
+        ${$cfgTpl} =~ s/(^\s+Include.*<\/VirtualHost>)/$cfgProxy$1/sm;
         0;
     }
 );
