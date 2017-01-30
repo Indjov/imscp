@@ -19,7 +19,6 @@
 
 use FindBin;
 use Encode qw/ encode /;
-use Encode::Detect;
 use iMSCP::Bootstrapper;
 use Mail::Address;
 use MIME::Parser;
