@@ -24,6 +24,7 @@ use warnings;
 use autouse 'iMSCP::Stepper' => qw/ startDetail endDetail step /;
 use Cwd;
 use Fcntl qw/ :flock /;
+use File::HomeDir;
 use FindBin;
 use iMSCP::Debug;
 use iMSCP::Dialog;
@@ -914,9 +915,13 @@ sub _rebuildAndInstallPackage
         return 1;
     }
 
+    # Avoid pbuilder warning due to missing $HOME/.pbuilderrc file
+    my $rs = iMSCP::File->new( filename => File::HomeDir->my_home.'/.pbuilderrc' )->save();
+    return $rs if $rs;
+
     startDetail();
 
-    my $rs = step(
+    $rs = step(
         sub {
             if ($self->{'need_pbuilder_update'}) {
                 $self->{'need_pbuilder_update'} = 0;
@@ -930,7 +935,7 @@ sub _rebuildAndInstallPackage
                     '--override-config'
                 ];
                 my $stderr;
-                my $rs = executeNoWait(
+                $rs = executeNoWait(
                     $cmd,
                     (iMSCP::Getopt->noprompt && iMSCP::Getopt->verbose ? undef : sub {
                             my $lines = shift;
@@ -941,9 +946,7 @@ sub _rebuildAndInstallPackage
                     ),
                     sub { $stderr .= shift; }
                 );
-                error(
-                    sprintf( 'Could not create/update pbuilder environment: %s', $stderr || 'Unknown error' )
-                ) if $rs;
+                error(sprintf( 'Could not create/update pbuilder environment: %s', $stderr || 'Unknown error' )) if $rs;
                 return $rs if $rs;
             }
             0;
@@ -958,8 +961,7 @@ sub _rebuildAndInstallPackage
                 \ my $stderr
             );
             debug( $stdout ) if $stdout;
-            error( sprintf( 'Could not get %s Debian source package: %s', $pkgSrc,
-                $stderr || 'Unknown error' ) ) if $rs;
+            error( sprintf( 'Could not get %s Debian source package: %s', $pkgSrc, $stderr || 'Unknown error' ) ) if $rs;
             $rs;
         },
         sprintf( 'Downloading %s %s source package...', $pkgSrc, $lsbRelease->getId( 1 ) ), 5, 2
@@ -1011,11 +1013,7 @@ sub _rebuildAndInstallPackage
                 (iMSCP::Getopt->noprompt && iMSCP::Getopt->verbose ? undef : \ $stdout),
                 \ $stderr
             );
-            error(
-                sprintf(
-                    'Could not build local %s %s package: %s', $pkg, $lsbRelease->getId( 1 ), $stderr || 'Unknown error'
-                )
-            ) if $rs;
+            error(sprintf('Could not build local %s %s package: %s', $pkg, $lsbRelease->getId( 1 ), $stderr || 'Unknown error')) if $rs;
             $rs;
         },
         sprintf( 'Building local %s %s package...', $pkg, $lsbRelease->getId( 1 ) ), 5, 4
@@ -1037,12 +1035,7 @@ sub _rebuildAndInstallPackage
                 (iMSCP::Getopt->noprompt && iMSCP::Getopt->verbose ? undef : \ $stdout),
                 \ $stderr
             );
-            error(
-                sprintf(
-                    'Could not install local %s %s package: %s', $pkg, $lsbRelease->getId( 1 ),
-                    $stderr || 'Unknown error'
-                )
-            ) if $rs;
+            error(sprintf('Could not install local %s %s package: %s', $pkg, $lsbRelease->getId( 1 ), $stderr || 'Unknown error')) if $rs;
             return $rs if $rs;
 
             # Ignore exit code due to https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1258958 bug
